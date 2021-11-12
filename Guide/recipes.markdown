@@ -402,3 +402,19 @@ And then you can style `.hash-target` instead of `:target`:
 ## How to integrate a rich text editor
 
 * Tiptap (a ProseMirror based editor), as used in [windofchange.me](https://windofchange.me): <https://gist.github.com/neongreen/7dbdddae3af0c476340e0dc175552fad>
+
+## How to copy the IHP Cloud database into your local database
+
+See the `dump_db` rule in the IHP makefile. As of November 12, 2021, the rule is found [here](https://github.com/digitallyinduced/ihp/blob/a361c6cec2781f331799f0d41681633c0c1d6457/lib/IHP/Makefile.dist#L123).
+
+You will need to remove `-h $$PWD/build/db` and use the psql connection string in the "Database" section of your project's IHP Cloud dashboard.
+
+The end result will look like this:
+
+```
+pg_dump "postgresql://..." -a --inserts --column-inserts --disable-triggers app | sed -e '/^--/d' > Application/Fixtures.sql
+```
+
+You will also need to remove all lines mentioning `public.schema_migrations` from `Application/Fixtures.sql`.
+
+After that, go to the development IDE and choose "Push to DB" (in the dropdown next to "Update DB").
